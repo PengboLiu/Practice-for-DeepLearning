@@ -5,7 +5,11 @@ Some exercises on deep learning, mainly about NLP.
 
 ### Neural Machine Translation
 
-- Bi-GRU+Attention NMT
+- [RNN+Attention NMT](https://github.com/PengboLiu/Practice-for-DeepLearning/blob/master/Neural%20Machine%20Translation/RNN%2BAttention.py)
 
   paper: [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)
+
+- Transformer
+
+  paper: [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
