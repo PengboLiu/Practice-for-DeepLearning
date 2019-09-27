@@ -125,22 +125,26 @@ class Decoder(nn.Module):
         weighted_encoder_rep = torch.bmm(a, encoder_outputs)
 
         weighted_encoder_rep = weighted_encoder_rep.permute(1, 0, 2)
-
+        # #weighted = [1, batch size, enc hid dim * 2]
         return weighted_encoder_rep
 
     def forward(self,
                 input: Tensor,
                 decoder_hidden: Tensor,
                 encoder_outputs: Tensor) -> Tuple[Tensor]:
-        input = input.unsqueeze(0)
 
+        input = input.unsqueeze(0)
+        # embedded = [1, batch size, emb dim]
         embedded = self.dropout(self.embedding(input))
 
         weighted_encoder_rep = self._weighted_encoder_rep(decoder_hidden,
                                                           encoder_outputs)
-
+        # rnn_input = [1, batch size, (enc hid dim * 2) + emb dim]
         rnn_input = torch.cat((embedded, weighted_encoder_rep), dim=2)
-
+        # sent len, n layers and n directions will always be 1 in this decoder, therefore:
+        # output = [1, batch size, dec hid dim]
+        # hidden = [1, batch size, dec hid dim]
+        # this also means that output == hidden
         output, decoder_hidden = self.rnn(rnn_input, decoder_hidden.unsqueeze(0))
 
         embedded = embedded.squeeze(0)
@@ -150,7 +154,7 @@ class Decoder(nn.Module):
         output = self.out(torch.cat((output,
                                      weighted_encoder_rep,
                                      embedded), dim=1))
-
+        # output = [bsz, output dim]
         return output, decoder_hidden.squeeze(0)
 
 
@@ -170,6 +174,10 @@ class Seq2Seq(nn.Module):
                 trg: Tensor,
                 teacher_forcing_ratio: float = 0.5) -> Tensor:
 
+        # src = [src sent len, batch size]
+        # trg = [trg sent len, batch size]
+        # teacher_forcing_ratio is probability to use teacher forcing
+        # e.g. if teacher_forcing_ratio is 0.75 we use teacher forcing 75% of the time
         batch_size = src.shape[1]
         max_len = trg.shape[0]
         trg_vocab_size = self.decoder.output_dim
@@ -185,6 +193,7 @@ class Seq2Seq(nn.Module):
             output, hidden = self.decoder(output, hidden, encoder_outputs)
             outputs[t] = output
             teacher_force = random.random() < teacher_forcing_ratio
+            # get the highest predicted token from our predictions
             top1 = output.max(1)[1]
             output = (trg[t] if teacher_force else top1)
 
@@ -255,7 +264,8 @@ def evaluate(model: nn.Module,
             trg = batch.trg
 
             output = model(src, trg, 0)  # turn off teacher forcing
-
+            # trg = [(trg sent len - 1) * batch size]
+            # output = [(trg sent len - 1) * batch size, output dim]
             output = output[1:].view(-1, output.shape[-1])
             trg = trg[1:].view(-1)
 
@@ -275,7 +285,6 @@ def epoch_time(start_time: int,
 
 
 if __name__ == '__main__':
-    #
     SRC = Field(tokenize="spacy",
                 tokenizer_language="de",
                 init_token='<sos>',
