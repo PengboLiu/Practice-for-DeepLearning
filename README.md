@@ -1,15 +1,21 @@
-# Practice-for-DeepLearning
+Practice-for-DeepLearning
+
 Some exercises on deep learning, mainly about NLP.
 
-**requirement: PyTorch**
+requirement: PyTorch
 
-### Neural Machine Translation
+Neural Machine Translation
 
-- [RNN+Attention](https://github.com/PengboLiu/Practice-for-DeepLearning/blob/master/Neural%20Machine%20Translation/RNN%2BAttention.py)
-
-  paper: [Neural Machine Translation by Jointly Learning to Align and Translate](https://arxiv.org/abs/1409.0473)
-
+- RNN+Attention
+  paper: Neural Machine Translation by Jointly Learning to Align and Translate
 - Transformer
+  paper: Attention Is All You Need
 
-  paper: [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+Text Classification
+
+Data set, vocabulary and pre-training word embedding
+
+- TextCNN
+  paper：Convolutional Neural Networks for Sentence Classification
+
 
